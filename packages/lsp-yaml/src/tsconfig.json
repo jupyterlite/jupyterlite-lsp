@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "../lib",
+    "tsBuildInfoFile": "../.src.tsbuildinfo",
+    "types": ["node"]
+  },
+  "extends": "../../tsconfigbase",
+  "include": ["./**/*"],
+  "references": [{ "path": "../" }, { "path": "../../lsp/src" }]
+}

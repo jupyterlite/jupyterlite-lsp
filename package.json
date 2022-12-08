@@ -1,0 +1,229 @@
+{
+  "private": true,
+  "scripts": {
+    "build:ext": "lerna run labextension:build",
+    "build:lib": "lerna run build",
+    "dist:npm": "lerna run dist:npm",
+    "dist:py": "flit build",
+    "docs:sphinx": "sphinx-build -b html docs build/docs",
+    "fix:js:package": "prettier-package-json --write package.json \"packages/*/package.json\"",
+    "fix:js:prettier": "jlpm prettier:base --write --list-different",
+    "fix:py:black": "black --quiet dodo.py src docs",
+    "fix:py:isort": "isort dodo.py src docs",
+    "fix:py:ssort": "ssort dodo.py src docs",
+    "lite:build": "cd examples && jupyter lite build && jupyter lite doit -- pre_archive:report:SHA256SUMS",
+    "setup:js": "jlpm --prefer-offline --ignore-optional --registry=https://registry.npmjs.org && yarn-deduplicate -s fewer --fail",
+    "setup:py:ext": "jupyter labextension develop . --overwrite && jupyter labextension list 2>&1 > build/labextensions.txt",
+    "setup:py:pip": "python -m pip install -e . --no-deps --ignore-installed --no-build-isolation && pip list --format=freeze > build/pip-freeze.txt",
+    "prettier:base": "prettier --cache --cache-location=build/.prettiercache \"{.,packages/**,.binder,.github/**,docs/**}/*.{js,md,json,ts,css,yml}\"",
+    "watch": "lerna run --parallel --stream watch"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
+    "lerna": "^6.0.3",
+    "prettier": "^2.8.0",
+    "prettier-package-json": "^2.7.0",
+    "prettier-plugin-sort-json": "~0.0.3",
+    "source-map-loader": "^4.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "~4.9.3",
+    "yarn-deduplicate": "^6.0.0"
+  },
+  "doit": {
+    "tasks": {
+      "lite:build": {
+        "file_dep": [
+          {
+            "ref": "setup:py:ext/targets"
+          },
+          "examples/*.json"
+        ],
+        "targets": [
+          "build/lite/SHA256SUMS"
+        ]
+      },
+      "docs:sphinx": {
+        "file_dep": [
+          "docs/*.md",
+          "README.md",
+          "CHANGELOG.md",
+          {
+            "template": "{{ P.CONNECTIO_JS }}"
+          },
+          {
+            "ref": "lite:build/targets"
+          }
+        ],
+        "targets": [
+          "build/docs/.buildinfo"
+        ]
+      },
+      "dist:npm": {
+        "file_dep": [
+          "packages/_meta/.src.tsbuildinfo",
+          "packages/*/*.md",
+          "packages/*/*.json",
+          "packages/*/.npmignore",
+          "packages/*/README.md",
+          "packages/*/LICENSE.txt",
+          {
+            "ref": "dist:py/targets"
+          }
+        ],
+        "targets": [
+          {
+            "template": "dist/jupyterlite-lsp-{{ D.JS_VERSION }}.tgz"
+          }
+        ]
+      },
+      "dist:py": {
+        "file_dep": [
+          {
+            "ref": "build:ext/targets"
+          },
+          "README.md",
+          "LICENSE.txt",
+          "pyproject.toml"
+        ],
+        "targets": [
+          {
+            "template": "dist/jupyterlite-lsp-{{ D.PY_VERSION }}.tar.gz"
+          },
+          {
+            "template": "dist/jupyterlite_lsp-{{ D.PY_VERSION }}-py3-none-any.whl"
+          }
+        ]
+      },
+      "setup:py:pip": {
+        "file_dep": [
+          "pyproject.toml",
+          {
+            "ref": "build:ext/targets"
+          }
+        ],
+        "targets": [
+          "build/pip-freeze.txt"
+        ]
+      },
+      "setup:py:ext": {
+        "file_dep": [
+          "build/pip-freeze.txt"
+        ],
+        "targets": [
+          "build/labextensions.txt"
+        ]
+      },
+      "fix:js:package": {
+        "file_dep": [
+          "package.json",
+          "packages/*/package.json",
+          "node_modules/.yarn-integrity"
+        ],
+        "targets": []
+      },
+      "fix:py:black": {
+        "file_dep": [
+          "dodo.py",
+          "src/jupyterlite_lsp/**/*.py",
+          "pyproject.toml"
+        ],
+        "task_dep": [
+          "fix:py:isort"
+        ],
+        "targets": []
+      },
+      "fix:py:isort": {
+        "file_dep": [
+          {
+            "ref": "fix:py:black/file_dep"
+          }
+        ],
+        "task_dep": [
+          "fix:py:ssort"
+        ],
+        "targets": []
+      },
+      "fix:py:ssort": {
+        "file_dep": [
+          {
+            "ref": "fix:py:black/file_dep"
+          }
+        ],
+        "targets": []
+      },
+      "setup:js": {
+        "file_dep": [
+          "package.json",
+          "packages/*/package.json"
+        ],
+        "targets": [
+          "node_modules/.yarn-integrity"
+        ]
+      },
+      "build:lib": {
+        "file_dep": [
+          "node_modules/.yarn-integrity",
+          "packages/*/src/**/*.ts",
+          "packages/*/*.json",
+          "packages/*/src/**/*.json"
+        ],
+        "targets": [
+          "packages/_meta/.src.tsbuildinfo"
+        ]
+      },
+      "build:ext": {
+        "file_dep": [
+          {
+            "ref": "build:lib/file_dep"
+          },
+          {
+            "ref": "build:lib/targets"
+          },
+          "packages/*/*.js"
+        ],
+        "targets": [
+          "src/jupyterlite_lsp/_d/share/jupyter/labextensions/@jupyterlite/lsp/package.json",
+          "src/jupyterlite_lsp/_d/share/jupyter/labextensions/@jupyterlite/lsp-yaml/package.json"
+        ]
+      },
+      "fix:js:prettier": {
+        "file_dep": [
+          {
+            "ref": "build:lib/file_dep"
+          },
+          "packages/*/*.json",
+          "packages/*/*.md",
+          ".binder/*",
+          ".github/**/*",
+          "*.json",
+          "*.md"
+        ],
+        "targets": [
+          "build/.prettiercache"
+        ],
+        "task_dep": [
+          "fix:js:package"
+        ]
+      }
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "proseWrap": "always",
+    "printWidth": 88,
+    "importOrder": [
+      "^@lumino/(.*)$",
+      "^@jupyterlab/(.*)$",
+      "^@jupyterlite/(.*)$",
+      "^[.]{2}/",
+      "^[./]"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
+  }
+}

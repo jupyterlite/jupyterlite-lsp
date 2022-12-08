@@ -1,0 +1,15 @@
+# jupyterlite-lsp
+
+# > this is an example file
+
+"$schema": http://json-schema.org/draft-07/schema#  # should support resolution
+
+type: object
+
+properties:
+  foo:
+    $ref: "#/definitions/foo"  # should support go-to-definition
+
+definitions:
+  foo:
+    type: not-an-object

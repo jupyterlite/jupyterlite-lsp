@@ -1,0 +1,55 @@
+{
+  "name": "@jupyterlite/lsp",
+  "version": "0.1.0-alpha0",
+  "description": "Multiplexing Language Server Protocol for JupyterLite",
+  "license": "BSD-3-Clause",
+  "author": "jupyterlite-lsp contributors",
+  "homepage": "https://github.com/jupyterlite/lsp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jupyterlite/lsp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jupyterlite/lsp/issues"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "{lib}/**/*"
+  ],
+  "scripts": {
+    "dist:npm": "cd ../../dist && npm pack ../packages/lsp",
+    "labextension:build": "jupyter labextension build .",
+    "watch": "jupyter labextension watch ."
+  },
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "@jupyterlite/server": "^0.1.0-beta.15",
+    "@krassowski/jupyterlab-lsp": "^3.10.2"
+  },
+  "devDependencies": {
+    "@jupyterlab/builder": "^3.4.0"
+  },
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlite",
+    "jupyterlite-extension"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "jupyterlab": {
+    "extension": "lib/plugin.js",
+    "outputDir": "../../src/jupyterlite_lsp/_d/share/jupyter/labextensions/@jupyterlite/lsp",
+    "webpackConfig": "./webpack.config.js",
+    "sharedPackages": {
+      "@krassowski/jupyterlab-lsp": {
+        "bundled": false,
+        "singleton": true
+      }
+    }
+  },
+  "jupyterlite": {
+    "liteExtension": true
+  }
+}

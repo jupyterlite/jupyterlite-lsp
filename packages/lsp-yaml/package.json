@@ -1,0 +1,58 @@
+{
+  "name": "@jupyterlite/lsp-yaml",
+  "version": "0.1.0-alpha0",
+  "description": "json-language-server for JupyterLite",
+  "license": "BSD-3-Clause",
+  "author": "jupyterlite-lsp contributors",
+  "homepage": "https://github.com/jupyterlite/lsp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jupyterlite/lsp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jupyterlite/lsp/issues"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "{lib}/**/*"
+  ],
+  "scripts": {
+    "dist:npm": "cd ../../dist && npm pack ../packages/lsp",
+    "labextension:build": "jupyter labextension build .",
+    "watch": "jupyter labextension watch ."
+  },
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "@jupyterlite/lsp": "^0.1.0a0",
+    "@jupyterlite/server": "^0.1.0-beta.15",
+    "jsonc-parser": "^3.2.0",
+    "wait-queue": "^1.1.4",
+    "yaml-language-server": "^1.10.0"
+  },
+  "devDependencies": {
+    "@jupyterlab/builder": "^3.4.0",
+    "@types/node": "^18.11.12"
+  },
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlite",
+    "jupyterlite-extension"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "jupyterlab": {
+    "extension": "lib/plugin.js",
+    "outputDir": "../../src/jupyterlite_lsp/_d/share/jupyter/labextensions/@jupyterlite/lsp-yaml",
+    "sharedPackages": {
+      "@jupyterlite/lsp": {
+        "bundled": false,
+        "singleton": true
+      }
+    }
+  },
+  "jupyterlite": {
+    "liteExtension": true
+  }
+}
